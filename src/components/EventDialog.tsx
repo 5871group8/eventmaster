@@ -52,7 +52,7 @@ const EventDialog = () => {
   };
 
   return (
-    <DialogContent className='sm:max-w-[425px]'>
+    <DialogContent className='sm:max-w-[425px] w-1/3'>
       <DialogHeader>
         <DialogTitle>Edit profile</DialogTitle>
         <DialogDescription>
@@ -152,9 +152,7 @@ const EventDialog = () => {
         </div>
       </div>
       <DialogFooter>
-        <DialogClose asChild>
           <Button onClick={handleSubmit}>Save changes</Button>
-        </DialogClose>
       </DialogFooter>
     </DialogContent>
   );

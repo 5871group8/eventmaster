@@ -42,10 +42,11 @@ function App() {
           >
             Suggest
           </div>
-          {/* <Link className='text-foreground hover:text-primary' to='/events'>
+          {isAuthenticated && <Link className='text-foreground hover:text-primary' to='/events'>
             Events
-          </Link> */}
-        </div>
+          </Link>
+        }       
+         </div>
         {/* User Registration Section */}
         {!isAuthenticated ? (
           <Button onClick={() => loginWithRedirect()}>Log In</Button>
