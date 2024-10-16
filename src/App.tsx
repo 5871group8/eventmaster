@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import Home from './pages/Home';
 import Events from './pages/Events';
@@ -27,7 +27,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <>
       <nav className='container mx-auto px-4 py-4 flex justify-between items-center'>
         <div className='flex space-x-4'>
           <Link className='text-foreground hover:text-primary' to='/'>
@@ -52,7 +52,11 @@ function App() {
         ) : (
           <Button
             onClick={() =>
-              logout({ logoutParams: { returnTo: window.location.origin } })
+              logout({
+                logoutParams: {
+                  returnTo: `${window.location.origin}/eventmaster`,
+                },
+              })
             }
           >
             Log Out
@@ -82,7 +86,7 @@ function App() {
           </div>
         </div>
       </footer>
-    </BrowserRouter>
+    </>
   );
 }
 
