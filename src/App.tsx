@@ -22,14 +22,20 @@ function App() {
   };
 
   console.log({ user, isAuthenticated });
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="loader"></div>
+      </div>
+    );
   }
 
   return (
     <>
-      <nav className='container mx-auto px-4 py-4 flex justify-between items-center'>
-        <div className='flex space-x-4'>
+      <nav className='w-full px-8 py-6 flex justify-between items-center bg-[#cac9c957]'>
+        <div className='text-lg font-bold hidden sm:block'>EventPlanner®</div>
+        <div className='flex space-x-4 h-[28px] items-end'>
           <Link className='text-foreground hover:text-primary' to='/'>
             Home
           </Link>
@@ -51,7 +57,9 @@ function App() {
         {!isAuthenticated ? (
           <Button onClick={() => loginWithRedirect()}>Log In</Button>
         ) : (
-          <Button
+          <div className='flex items-center gap-2'>
+           
+            <Button
             onClick={() =>
               logout({
                 logoutParams: {
@@ -62,16 +70,20 @@ function App() {
           >
             Log Out
           </Button>
+          
+          </div>
         )}
       </nav>
 
+<div className='pb-[148px]'>
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/events' element={<Events />} />
         <Route path='/about' element={<About />} />
       </Routes>
+      </div>
 
-      <footer className='bg-background text-foreground'>
+      <footer className='bg-background text-foreground fixed bottom-0 left-0 w-full'>
         <div className='container mx-auto px-4 py-8'>
           <p className='mb-1'>
             If you have any questions or need support, please reach out to us:

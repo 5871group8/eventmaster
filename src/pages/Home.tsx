@@ -10,22 +10,29 @@ const Home: React.FC = () => {
   return (
     <div className='container mx-auto px-4 py-8'>
       <header className='text-center mb-12'>
-        <h1 className='text-4xl font-bold tracking-tight'>
-          Hi, {user?.name || 'Friend'}!
-        </h1>
-        <h2 className='text-3xl font-semibold'>Welcome to EventMaster</h2>
-        <p className='text-xl text-muted-foreground mt-2'>
-          Discover and register for exciting events happening near you!
+        
+        <div>
+        <p className='text-4xl font-semibold'>
+          Create your event management
         </p>
+        <p className='text-4xl font-semibold'>more effectively</p>
+        </div>
       </header>
+
+      
       <main className='space-y-12'>
+      <h1 className='text-4xl font-bold tracking-tight'>
+          Hi, {user?.name || 'Friend'}! <span className='text-6xl'>👋</span>
+        </h1>
+        <h2 className='text-3xl font-semibold'>Welcome to EventPlanner</h2>
+        
         <section className='text-center'>
-          <p className='text-lg text-muted-foreground'>
+          <p className='text-lg'>
             Your one-stop destination for finding and planning unforgettable
             events!
           </p>
           <Button
-            className='mt-4'
+            className='mt-8'
             onClick={() => {
               if (isAuthenticated) {
                 navigate('/events');
@@ -37,7 +44,7 @@ const Home: React.FC = () => {
             Get Started
           </Button>
         </section>
-        <section className='bg-card text-card-foreground rounded-lg p-6 shadow-sm'>
+        <section className='text-card-foreground p-6'>
           <h2 className='text-2xl font-semibold mb-4'>
             About Our Event Planner
           </h2>
@@ -45,23 +52,18 @@ const Home: React.FC = () => {
             EventMaster is a powerful and user-friendly event planning platform
             designed to help you:
           </p>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-6'>
+          <div className='flex flex-col gap-4 mb-6 items-center'>
             {[
-              'Discover a wide range of events in your area',
-              'Easily register and manage your event attendance',
+              'Simplifying the process of organizing and managing events',
+              'Customizable templates for various types of events',
               'Create and promote your own events',
-              'Connect with like-minded individuals and expand your network',
+              'Integration with popular marketing platforms to boost event visibility',
             ].map((item, index) => (
-              <div key={index} className='flex items-start space-x-2'>
+              <div key={index} className='flex items-center'>
                 <span className='text-sm'>{item}</span>
               </div>
             ))}
           </div>
-          <p>
-            Whether you're looking for concerts, workshops, conferences, or
-            social gatherings, EventMaster has got you covered. Start exploring
-            today and make every moment count!
-          </p>
         </section>
       </main>
     </div>

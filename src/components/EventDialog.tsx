@@ -4,7 +4,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -31,7 +30,7 @@ import {
 } from '@/components/ui/select';
 import useEventStore from '@/store/events';
 
-const EventDialog = () => {
+const EventDialog = ({close}:{close: () => void}) => {
   const { categories } = useCategoryStore();
   const { addEvent } = useEventStore();
 
@@ -49,10 +48,12 @@ const EventDialog = () => {
       categoryId: category === 'all' ? undefined : parseInt(category),
       title,
     });
+    close()
   };
 
+
   return (
-    <DialogContent className='sm:max-w-[425px] w-1/3'>
+    <DialogContent className='sm:max-w-[425px] min-w-[380px] w-1/3'>
       <DialogHeader>
         <DialogTitle>Edit profile</DialogTitle>
         <DialogDescription>
