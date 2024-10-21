@@ -1,25 +1,26 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useCategoryStore } from "../store/categories";
-import useEventStore, { UEvent } from "../store/events";
-import dayjs from "dayjs";
-import { useAuth0 } from "@auth0/auth0-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useCategoryStore } from '../../store/categories';
+import useEventStore, { UEvent } from '../../store/events';
+import dayjs from 'dayjs';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/popover';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import EventDialog from "@/components/EventDialog";
-import { DialogDescription } from "@radix-ui/react-dialog";
+} from '@/components/ui/dialog';
+import EventDialog from '@/components/EventDialog';
+import { DialogDescription } from '@radix-ui/react-dialog';
+import './index.css';
 // const mockData = [
 //   {
 //     id: 1,
@@ -49,23 +50,24 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 
 const Events: React.FC = () => {
   const { user } = useAuth0();
-  const [newCategoryName, setNewCategoryName] = useState<string>("");
+  const [newCategoryName, setNewCategoryName] = useState<string>('');
 
   const [filteredEvents, setFilteredEvents] = useState<UEvent[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>();
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false); // Manage dialog open state
 
-  const { events, initialize: initializeEvents } = useEventStore();
+  const { events, initialize: initializeEvents, deleteEvent } = useEventStore();
   const {
     categories,
     initialize: initializeCategories,
     addCategory,
+    removeCategory,
   } = useCategoryStore();
 
   useEffect(() => {
-    initializeEvents(user?.sub || "");
-    initializeCategories(user?.sub || "");
+    initializeEvents(user?.sub || '');
+    initializeCategories(user?.sub || '');
   }, [initializeCategories, initializeEvents, user?.sub]);
 
   const filterEvents = useCallback(() => {
@@ -73,7 +75,7 @@ const Events: React.FC = () => {
 
     if (selectedCategory) {
       filtered = filtered.filter(
-        (event) => event.categoryId === +selectedCategory
+        (event) => Number(event.categoryId) === Number(selectedCategory)
       );
     }
 
@@ -86,7 +88,7 @@ const Events: React.FC = () => {
       );
     }
 
-    console.log("filtered", filtered);
+    console.log('filtered', filtered);
     return setFilteredEvents(filtered);
   }, [events, selectedCategory, searchTerm]);
 
@@ -98,26 +100,33 @@ const Events: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const capitailizeUserName =(user?.name)?.split(' ').map(i => [i[0].toLocaleUpperCase(), ...i.slice(1)].join('')).join(' ')
+  const capitalizedUserName = user?.name
+    ?.split(' ')
+    .map((i) => [i[0].toLocaleUpperCase(), ...i.slice(1)].join(''))
+    .join(' ');
 
+  console.log({ filteredEvents });
   return (
-    <div className="events-page">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">{capitailizeUserName ? `${capitailizeUserName}'s`: ''} Upcoming Events</h1>
+    <div className='events-page'>
+      <div className='container mx-auto px-4 py-8'>
+        <h1 className='text-3xl font-bold mb-8'>
+          {capitalizedUserName ? `${capitalizedUserName}'s` : ''} Upcoming
+          Events
+        </h1>
 
-        <div className="flex flex-col justify-between mb-8">
-          <div className="mb-4 flex justify-between gap-4">
+        <div className='flex flex-col justify-between mb-8'>
+          <div className='mb-4 flex justify-between gap-4'>
             <Input
-              className="w-full"
-              placeholder="Search events..."
+              className='w-full'
+              placeholder='Search events...'
               value={searchTerm}
               onChange={handleSearchChange}
             />
             <Dialog>
               <DialogTrigger asChild>
                 <Button
-                  variant="outline"
-                  size="icon"
+                  variant='outline'
+                  size='icon'
                   onClick={() => setIsOpen(true)}
                 >
                   +
@@ -126,15 +135,15 @@ const Events: React.FC = () => {
               {isOpen && <EventDialog close={() => setIsOpen(false)} />}
             </Dialog>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Button key={"all"} variant={"outline"} size="sm">
+          <div className='flex flex-wrap gap-2'>
+            <Button key={'all'} variant={'outline'} size='sm'>
               ALL
             </Button>
             {categories.map((category) => (
               <Button
                 key={category.id}
-                variant={"outline"}
-                size="sm"
+                variant={'outline'}
+                size='sm'
                 onClick={() => setSelectedCategory(category.id)}
               >
                 {category.name}
@@ -142,40 +151,39 @@ const Events: React.FC = () => {
             ))}
             <Popover>
               <PopoverTrigger asChild>
-                <Button key={"add"} variant={"outline"} size="sm">
+                <Button key={'add'} variant={'outline'} size='sm'>
                   +
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <div className="grid grid-cols-3 items-center gap-4">
+              <PopoverContent className='w-80'>
+                <div className='grid gap-4'>
+                  <div className='grid gap-2'>
+                    <div className='grid grid-cols-3 items-center gap-4'>
                       <Input
-                        id="width"
-                        defaultValue=""
-                        className="col-span-2 h-8"
+                        id='category_input'
+                        className='col-span-2 h-8'
                         value={newCategoryName}
                         onChange={(e) => setNewCategoryName(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter" && newCategoryName) {
+                          if (e.key === 'Enter' && newCategoryName) {
                             addCategory({
                               name: newCategoryName,
                               id: Date.now(),
                             });
-                            setNewCategoryName("");
+                            setNewCategoryName('');
                           }
                         }}
                       />
                       <Button
-                        variant="outline"
-                        size="icon"
+                        variant='outline'
+                        size='icon'
                         onClick={() => {
                           if (newCategoryName) {
                             addCategory({
                               name: newCategoryName,
                               id: Date.now(),
                             });
-                            setNewCategoryName("");
+                            setNewCategoryName('');
                           }
                         }}
                       >
@@ -186,38 +194,63 @@ const Events: React.FC = () => {
                 </div>
               </PopoverContent>
             </Popover>
+
+            {selectedCategory && (
+              <Button
+                key={'remove'}
+                variant={'outline'}
+                size='sm'
+                onClick={() => {
+                  removeCategory(selectedCategory);
+                  setSelectedCategory(undefined);
+                }}
+              >
+                delete category
+              </Button>
+            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
           {filteredEvents.map((event) => (
-            <Card key={event.id}>
-              <CardContent className="p-0">
-                <div className="p-4">
-                  {event.categoryId && (
-                    <Badge className="mb-2">
-                      {
-                        categories.find((c) => c.id === +event.categoryId!)
-                          ?.name
-                      }
-                    </Badge>
-                  )}
-                  <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
-                  <p className="text-gray-600 mb-2">
-                    {dayjs(event.date).format("YYYY-MM-DD")}
+            <Card key={event.id} className='eventCard'>
+              <CardContent className='p-0'>
+                <div className='p-4 relative'>
+                  {event.categoryId &&
+                    categories.find((c) => c.id === +event.categoryId!) && (
+                      <Badge className='mb-2'>
+                        {
+                          categories.find((c) => c.id === +event.categoryId!)
+                            ?.name
+                        }
+                      </Badge>
+                    )}
+                  <h3 className='text-xl font-semibold mb-2'>{event.title}</h3>
+                  <p className='text-gray-600 mb-2'>
+                    {dayjs(event.date).format('YYYY-MM-DD')}
                   </p>
-                  <p className="text-gray-600 mb-4">{event.location}</p>
+                  <p className='text-gray-600 mb-4'>{event.location}</p>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="w-full">
+                      <Button variant='outline' className='w-full'>
                         View Details
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px] min-w-[380px] w-1/3">
+                    <DialogContent className='sm:max-w-[425px] min-w-[380px] w-1/3 break-all'>
                       <DialogTitle>Description</DialogTitle>
                       <DialogDescription>{event.description}</DialogDescription>
                     </DialogContent>
                   </Dialog>
+                  <Button
+                    variant='destructive'
+                    size='icon'
+                    className='hoverDelBtn absolute top-3 right-3 items-center justify-center w-6 h-6'
+                    onClick={() => {
+                      deleteEvent(event.id);
+                    }}
+                  >
+                    x
+                  </Button>
                 </div>
               </CardContent>
             </Card>

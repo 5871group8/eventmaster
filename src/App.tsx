@@ -25,8 +25,8 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="loader"></div>
+      <div className='flex justify-center items-center h-screen'>
+        <div className='loader'></div>
       </div>
     );
   }
@@ -48,39 +48,38 @@ function App() {
           >
             Suggest
           </div>
-          {isAuthenticated && <Link className='text-foreground hover:text-primary' to='/events'>
-            Events
-          </Link>
-        }       
-         </div>
+          {isAuthenticated && (
+            <Link className='text-foreground hover:text-primary' to='/events'>
+              Events
+            </Link>
+          )}
+        </div>
         {/* User Registration Section */}
         {!isAuthenticated ? (
           <Button onClick={() => loginWithRedirect()}>Log In</Button>
         ) : (
           <div className='flex items-center gap-2'>
-           
             <Button
-            onClick={() =>
-              logout({
-                logoutParams: {
-                  returnTo: `${window.location.origin}/eventmaster`,
-                },
-              })
-            }
-          >
-            Log Out
-          </Button>
-          
+              onClick={() =>
+                logout({
+                  logoutParams: {
+                    returnTo: `${window.location.origin}/eventmaster`,
+                  },
+                })
+              }
+            >
+              Log Out
+            </Button>
           </div>
         )}
       </nav>
 
-<div className='pb-[148px]'>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/events' element={<Events />} />
-        <Route path='/about' element={<About />} />
-      </Routes>
+      <div className='pb-[148px]'>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/events' element={<Events />} />
+          <Route path='/about' element={<About />} />
+        </Routes>
       </div>
 
       <footer className='bg-background text-foreground fixed bottom-0 left-0 w-full'>

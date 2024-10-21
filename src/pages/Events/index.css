@@ -1,0 +1,10 @@
+.hoverDelBtn {
+    display: none;
+    
+}
+.eventCard{
+    position: relative;
+}
+.eventCard:hover .hoverDelBtn {
+    display: flex;
+}
