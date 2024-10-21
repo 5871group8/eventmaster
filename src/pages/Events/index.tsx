@@ -51,6 +51,7 @@ import './index.css';
 const Events: React.FC = () => {
   const { user } = useAuth0();
   const [newCategoryName, setNewCategoryName] = useState<string>('');
+  const [updateCategoryName, setUpdateCategoryName] = useState<string>('');
 
   const [filteredEvents, setFilteredEvents] = useState<UEvent[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number>();
@@ -63,6 +64,7 @@ const Events: React.FC = () => {
     initialize: initializeCategories,
     addCategory,
     removeCategory,
+    updateCategory,
   } = useCategoryStore();
 
   useEffect(() => {
@@ -105,7 +107,7 @@ const Events: React.FC = () => {
     .map((i) => [i[0].toLocaleUpperCase(), ...i.slice(1)].join(''))
     .join(' ');
 
-  console.log({ filteredEvents });
+  console.log({ filteredEvents, selectedCategory });
   return (
     <div className='events-page'>
       <div className='container mx-auto px-4 py-8'>
@@ -196,17 +198,44 @@ const Events: React.FC = () => {
             </Popover>
 
             {selectedCategory && (
-              <Button
-                key={'remove'}
-                variant={'outline'}
-                size='sm'
-                onClick={() => {
-                  removeCategory(selectedCategory);
-                  setSelectedCategory(undefined);
-                }}
-              >
-                delete category
-              </Button>
+              <>
+                <Input
+                  id='category_input'
+                  className='w-24 h-8'
+                  value={updateCategoryName}
+                  onChange={(e) => setUpdateCategoryName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && updateCategoryName.length) {
+                      updateCategory(selectedCategory, updateCategoryName);
+                      setUpdateCategoryName('');
+                    }
+                  }}
+                />
+                <Button
+                  key='add_category'
+                  variant='outline'
+                  size='sm'
+                  onClick={() => {
+                    updateCategory(selectedCategory, updateCategoryName);
+                    setUpdateCategoryName('');
+                    setSelectedCategory(undefined);
+                  }}
+                >
+                  ✅
+                </Button>
+                <Button
+                  key='delete_category'
+                  variant='outline'
+                  size='sm'
+                  onClick={() => {
+                    removeCategory(selectedCategory);
+                    setUpdateCategoryName('');
+                    setSelectedCategory(undefined);
+                  }}
+                >
+                  🗑
+                </Button>
+              </>
             )}
           </div>
         </div>
@@ -242,15 +271,35 @@ const Events: React.FC = () => {
                     </DialogContent>
                   </Dialog>
                   <Button
-                    variant='destructive'
+                    variant='outline'
                     size='icon'
-                    className='hoverDelBtn absolute top-3 right-3 items-center justify-center w-6 h-6'
+                    className='hoverDelBtn absolute top-3 left-3 items-center justify-center w-6 h-6'
                     onClick={() => {
                       deleteEvent(event.id);
                     }}
                   >
-                    x
+                    🗑
                   </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant='outline'
+                        size='icon'
+                        className='hoverDelBtn absolute top-3 right-3 items-center justify-center w-6 h-6'
+                        onClick={() => {
+                          setIsOpen(true);
+                        }}
+                      >
+                        🛠️
+                      </Button>
+                    </DialogTrigger>
+                    {isOpen && (
+                      <EventDialog
+                        close={() => setIsOpen(false)}
+                        initData={event}
+                      />
+                    )}
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>

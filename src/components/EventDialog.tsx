@@ -28,29 +28,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import useEventStore from '@/store/events';
+import useEventStore, { UEvent } from '@/store/events';
 
-const EventDialog = ({close}:{close: () => void}) => {
+const EventDialog = ({
+  close,
+  initData,
+}: {
+  close: () => void;
+  initData?: UEvent;
+}) => {
   const { categories } = useCategoryStore();
-  const { addEvent } = useEventStore();
+  const { addEvent, updateEvent } = useEventStore();
 
-  const [title, setTitle] = useState('');
-  const [date, setDate] = useState<Date>();
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<string>('all');
+  const [title, setTitle] = useState(initData?.title || '');
+  const [date, setDate] = useState<Date | undefined>(
+    initData?.date ? dayjs(initData.date).toDate() : dayjs().toDate()
+  );
+  const [location, setLocation] = useState(initData?.location || '');
+  const [description, setDescription] = useState(initData?.description || '');
+  const [category, setCategory] = useState<number | undefined>(
+    initData?.categoryId
+  );
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addEvent({
-      date: dayjs(date).valueOf(),
-      location,
-      description,
-      categoryId: category === 'all' ? undefined : parseInt(category),
-      title,
-    });
-    close()
+    if (initData?.id) {
+      updateEvent(initData.id, {
+        date: dayjs(date).valueOf(),
+        location,
+        description,
+        categoryId: !category ? undefined : category,
+        title,
+      });
+    } else {
+      addEvent({
+        date: dayjs(date).valueOf(),
+        location,
+        description,
+        categoryId: !category ? undefined : category,
+        title,
+      });
+    }
+    close();
   };
-
 
   return (
     <DialogContent className='sm:max-w-[425px] min-w-[380px] w-1/3'>
@@ -77,7 +96,11 @@ const EventDialog = ({close}:{close: () => void}) => {
           <Label htmlFor='category' className='text-right'>
             Category
           </Label>
-          <Select onValueChange={(value) => setCategory(value)}>
+          <Select
+            onValueChange={(value) =>
+              setCategory(value === 'all' ? undefined : +value)
+            }
+          >
             <SelectTrigger className='w-[180px]'>
               <SelectValue placeholder='Select a category' />
             </SelectTrigger>
@@ -153,7 +176,7 @@ const EventDialog = ({close}:{close: () => void}) => {
         </div>
       </div>
       <DialogFooter>
-          <Button onClick={handleSubmit}>Save changes</Button>
+        <Button onClick={handleSubmit}>Save changes</Button>
       </DialogFooter>
     </DialogContent>
   );
